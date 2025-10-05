@@ -1,0 +1,87 @@
+{
+  "cursor.contextFiles": [
+    ".cursor-context.json",
+    ".cursor-context.md",
+    "README.md",
+    "docs/README.md",
+    "package.json",
+    "nx.json",
+    "tsconfig.base.json"
+  ],
+  "cursor.includePatterns": [
+    "apps/**/*.ts",
+    "apps/**/*.js",
+    "libs/**/*.ts",
+    "libs/**/*.js",
+    "scripts/**/*.js",
+    "docs/**/*.md",
+    "*.json",
+    "*.md"
+  ],
+  "cursor.excludePatterns": [
+    "node_modules/**",
+    "dist/**",
+    "build/**",
+    "coverage/**",
+    ".nx/**",
+    "tmp/**"
+  ],
+  "cursor.projectContext": {
+    "name": "Turbo Task Master",
+    "description": "Full-stack task management system with RBAC and organization hierarchy",
+    "techStack": [
+      "Angular 19.2.0",
+      "NestJS 10.4.17", 
+      "NgRx 20.0.1",
+      "TypeORM",
+      "PostgreSQL",
+      "PrimeNG",
+      "TailwindCSS",
+      "NX Monorepo"
+    ],
+    "keyFeatures": [
+      "Role-based access control (RBAC)",
+      "Organization hierarchy management",
+      "RSA-based JWT authentication",
+      "Task management with SLA tracking",
+      "Comprehensive audit logging"
+    ],
+    "developmentCommands": {
+      "start": "npm run start:api && npm run start:dashboard",
+      "test": "npm test",
+      "build": "npm run build:api && npm run build:dashboard",
+      "lint": "npm run lint"
+    }
+  },
+  "typescript.preferences.includePackageJsonAutoImports": "auto",
+  "typescript.suggest.autoImports": true,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit",
+    "source.fixAll.eslint": "explicit"
+  },
+  "eslint.workingDirectories": [
+    "apps/api",
+    "apps/dashboard",
+    "libs"
+  ],
+  "files.associations": {
+    "*.json": "jsonc"
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/coverage": true,
+    "**/.nx": true,
+    "**/tmp": true
+  },
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/coverage": true,
+    "**/.nx": true,
+    "**/tmp": true
+  }
+}

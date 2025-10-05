@@ -1,0 +1,43 @@
+<mat-form-field
+  [appearance]="appearance"
+  [class]="getFormFieldClasses()"
+  [matTooltip]="tooltip"
+  [matTooltipPosition]="tooltipPosition"
+>
+  <mat-label *ngIf="label">{{ label }}</mat-label>
+
+  <input
+    matInput
+    [matDatepicker]="picker"
+    [placeholder]="placeholder"
+    [disabled]="disabled"
+    [readonly]="readonly"
+    [required]="required"
+    [min]="min"
+    [max]="max"
+    [value]="value"
+    (dateChange)="onDateChange($event.value)"
+    (focus)="onInputFocus($event)"
+    (blur)="onInputBlur($event)"
+  />
+
+  <mat-icon
+    *ngIf="suffixIcon"
+    matSuffix
+    [fontIcon]="suffixIcon"
+    [class]="suffixIconClass"
+    (click)="picker.open()"
+    style="cursor: pointer;"
+  >
+  </mat-icon>
+
+  <mat-datepicker
+    #picker
+    [startView]="startView"
+    [touchUi]="touchUi"
+  ></mat-datepicker>
+
+  <mat-hint *ngIf="hint" [align]="hintAlign">{{ hint }}</mat-hint>
+
+  <mat-error *ngIf="errorMessage">{{ errorMessage }}</mat-error>
+</mat-form-field>

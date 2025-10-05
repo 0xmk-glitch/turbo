@@ -1,0 +1,279 @@
+<div
+  cdkDropListGroup
+  class="flex flex-col lg:flex-row gap-6 lg:gap-8 w-full min-h-96"
+>
+  <!-- To Do Column -->
+  <div
+    class="flex-1 bg-neutral-50 dark:bg-neutral-800 rounded-2xl p-6 shadow-soft border border-neutral-200 dark:border-neutral-700"
+  >
+    <div class="flex items-center justify-between mb-6">
+      <h2
+        class="text-lg font-semibold text-neutral-700 dark:text-neutral-300 flex items-center"
+      >
+        <div class="flex items-center space-x-3">
+          <div
+            class="p-2 bg-accent-100 dark:bg-accent-900/30 rounded-xl shadow-soft"
+          >
+            <mat-icon class="text-accent-500 text-sm">pending</mat-icon>
+          </div>
+          <span>To Do</span>
+          <span
+            class="bg-accent-100 dark:bg-accent-900 text-accent-800 dark:text-accent-200 text-xs px-3 py-1.5 rounded-full font-semibold"
+          >
+            {{ (tasksByStatus?.[0] || []).length }}
+          </span>
+        </div>
+      </h2>
+    </div>
+    <div
+      cdkDropList
+      [cdkDropListData]="tasksByStatus?.[0] || []"
+      class="min-h-64 space-y-3"
+      (cdkDropListDropped)="drop($event)"
+    >
+      @for (item of tasksByStatus?.[0] || []; track item.id) {
+        <div
+          class="bg-white dark:bg-neutral-700 rounded-xl p-5 shadow-soft border border-neutral-200 dark:border-neutral-600 hover:shadow-soft-md transition-all duration-300 cursor-move hover:scale-[1.02] animate-fade-in"
+          cdkDrag
+        >
+          <div class="flex items-start justify-between">
+            <div class="flex-1">
+              <h3
+                class="font-semibold text-neutral-900 dark:text-neutral-100 mb-2 text-base"
+              >
+                {{ item.title }}
+              </h3>
+              @if (item.description) {
+                <p
+                  class="text-sm text-neutral-600 dark:text-neutral-400 mb-3 leading-relaxed"
+                >
+                  {{ item.description }}
+                </p>
+              }
+              <div class="flex items-center justify-between text-xs">
+                <div class="flex items-center space-x-2">
+                  <span
+                    class="bg-neutral-100 dark:bg-neutral-600 px-3 py-1.5 rounded-lg capitalize font-medium text-neutral-700 dark:text-neutral-300"
+                    >{{ item.type }}</span
+                  >
+                  @if (item.priority) {
+                    <span
+                      class="px-3 py-1.5 rounded-lg font-semibold text-xs"
+                      [class]="getPriorityClass(item.priority)"
+                    >
+                      {{ getPriorityLabel(item.priority) }}
+                    </span>
+                  }
+                </div>
+                @if (item.dueDate) {
+                  <span
+                    class="text-xs font-medium"
+                    [class]="
+                      isOverdue(item.dueDate)
+                        ? 'text-red-500'
+                        : 'text-neutral-500 dark:text-neutral-400'
+                    "
+                  >
+                    {{ formatDate(item.dueDate) }}
+                  </span>
+                }
+              </div>
+            </div>
+            <div class="flex gap-1 ml-3">
+              <button
+                mat-icon-button
+                class="text-neutral-400 hover:text-accent-500 dark:hover:text-accent-400 hover:bg-accent-50 dark:hover:bg-accent-900/20 rounded-lg transition-all duration-200"
+                (click)="editItem(item)"
+                matTooltip="Edit task"
+              >
+                <mat-icon class="text-sm">edit</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                class="text-neutral-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all duration-200"
+                (click)="deleteItem(item)"
+                matTooltip="Delete task"
+              >
+                <mat-icon class="text-sm">delete</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- In Progress Column -->
+  <div
+    class="flex-1 bg-neutral-50 dark:bg-neutral-800 rounded-2xl p-6 shadow-soft border border-neutral-200 dark:border-neutral-700"
+  >
+    <div class="flex items-center justify-between mb-6">
+      <h2
+        class="text-lg font-semibold text-neutral-700 dark:text-neutral-300 flex items-center"
+      >
+        <div class="flex items-center space-x-3">
+          <div
+            class="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-xl shadow-soft"
+          >
+            <mat-icon class="text-orange-500 text-sm">work</mat-icon>
+          </div>
+          <span>In Progress</span>
+          <span
+            class="bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200 text-xs px-3 py-1.5 rounded-full font-semibold"
+          >
+            {{ (tasksByStatus?.[1] || []).length }}
+          </span>
+        </div>
+      </h2>
+    </div>
+    <div
+      cdkDropList
+      [cdkDropListData]="tasksByStatus?.[1] || []"
+      class="min-h-64 space-y-3"
+      (cdkDropListDropped)="drop($event)"
+    >
+      @for (item of tasksByStatus?.[1] || []; track item.id) {
+        <div
+          class="bg-white dark:bg-neutral-700 rounded-xl p-5 shadow-soft border border-neutral-200 dark:border-neutral-600 hover:shadow-soft-md transition-all duration-300 cursor-move hover:scale-[1.02] animate-fade-in"
+          cdkDrag
+        >
+          <div class="flex items-start justify-between">
+            <div class="flex-1">
+              <h3
+                class="font-semibold text-neutral-900 dark:text-neutral-100 mb-2 text-base"
+              >
+                {{ item.title }}
+              </h3>
+              @if (item.description) {
+                <p
+                  class="text-sm text-neutral-600 dark:text-neutral-400 mb-3 leading-relaxed"
+                >
+                  {{ item.description }}
+                </p>
+              }
+              <div class="flex items-center space-x-2 text-xs">
+                <span
+                  class="bg-neutral-100 dark:bg-neutral-600 px-3 py-1.5 rounded-lg font-medium text-neutral-700 dark:text-neutral-300"
+                  >{{ item.type }}</span
+                >
+                @if (item.priority) {
+                  <span
+                    class="px-3 py-1.5 rounded-lg font-semibold text-xs"
+                    [class]="getPriorityClass(item.priority)"
+                  >
+                    {{ getPriorityLabel(item.priority) }}
+                  </span>
+                }
+              </div>
+            </div>
+            <div class="flex gap-1 ml-3">
+              <button
+                mat-icon-button
+                class="text-neutral-400 hover:text-accent-500 dark:hover:text-accent-400 hover:bg-accent-50 dark:hover:bg-accent-900/20 rounded-lg transition-all duration-200"
+                (click)="editItem(item)"
+                matTooltip="Edit task"
+              >
+                <mat-icon class="text-sm">edit</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                class="text-neutral-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all duration-200"
+                (click)="deleteItem(item)"
+                matTooltip="Delete task"
+              >
+                <mat-icon class="text-sm">delete</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Done Column -->
+  <div
+    class="flex-1 bg-neutral-50 dark:bg-neutral-800 rounded-2xl p-6 shadow-soft border border-neutral-200 dark:border-neutral-700"
+  >
+    <div class="flex items-center justify-between mb-6">
+      <h2
+        class="text-lg font-semibold text-neutral-700 dark:text-neutral-300 flex items-center"
+      >
+        <div class="flex items-center space-x-3">
+          <div
+            class="p-2 bg-green-100 dark:bg-green-900/30 rounded-xl shadow-soft"
+          >
+            <mat-icon class="text-green-500 text-sm">check_circle</mat-icon>
+          </div>
+          <span>Done</span>
+          <span
+            class="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs px-3 py-1.5 rounded-full font-semibold"
+          >
+            {{ (tasksByStatus?.[2] || []).length }}
+          </span>
+        </div>
+      </h2>
+    </div>
+    <div
+      cdkDropList
+      [cdkDropListData]="tasksByStatus?.[2] || []"
+      class="min-h-64 space-y-3"
+      (cdkDropListDropped)="drop($event)"
+    >
+      @for (item of tasksByStatus?.[2] || []; track item.id) {
+        <div
+          class="bg-white dark:bg-neutral-700 rounded-xl p-5 shadow-soft border border-neutral-200 dark:border-neutral-600 hover:shadow-soft-md transition-all duration-300 cursor-move hover:scale-[1.02] opacity-75 animate-fade-in"
+          cdkDrag
+        >
+          <div class="flex items-start justify-between">
+            <div class="flex-1">
+              <h3
+                class="font-semibold text-neutral-900 dark:text-neutral-100 mb-2 text-base line-through"
+              >
+                {{ item.title }}
+              </h3>
+              @if (item.description) {
+                <p
+                  class="text-sm text-neutral-600 dark:text-neutral-400 mb-3 leading-relaxed"
+                >
+                  {{ item.description }}
+                </p>
+              }
+              <div class="flex items-center space-x-2 text-xs">
+                <span
+                  class="bg-neutral-100 dark:bg-neutral-600 px-3 py-1.5 rounded-lg font-medium text-neutral-700 dark:text-neutral-300"
+                  >{{ item.type }}</span
+                >
+                @if (item.priority) {
+                  <span
+                    class="px-3 py-1.5 rounded-lg font-semibold text-xs"
+                    [class]="getPriorityClass(item.priority)"
+                  >
+                    {{ getPriorityLabel(item.priority) }}
+                  </span>
+                }
+              </div>
+            </div>
+            <div class="flex gap-1 ml-3">
+              <button
+                mat-icon-button
+                class="text-neutral-400 hover:text-accent-500 dark:hover:text-accent-400 hover:bg-accent-50 dark:hover:bg-accent-900/20 rounded-lg transition-all duration-200"
+                (click)="editItem(item)"
+                matTooltip="Edit task"
+              >
+                <mat-icon class="text-sm">edit</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                class="text-neutral-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all duration-200"
+                (click)="deleteItem(item)"
+                matTooltip="Delete task"
+              >
+                <mat-icon class="text-sm">delete</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>
