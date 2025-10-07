@@ -7,9 +7,6 @@ import {
   TaskType,
   TaskPriority,
 } from '@turbo-task-master/api-interfaces';
-import { TableModule } from 'primeng/table';
-import { TagModule } from 'primeng/tag';
-import { ButtonModule } from 'primeng/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -21,9 +18,6 @@ import { MatNativeDateModule } from '@angular/material/core';
   selector: 'app-create-task',
   imports: [
     CommonModule,
-    TableModule,
-    TagModule,
-    ButtonModule,
     MatSidenavModule,
     MatButtonModule,
     MatIconModule,

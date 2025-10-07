@@ -46,6 +46,8 @@ export class TasksService {
   }
 
   createTask(task: CreateTaskDto): Observable<Task> {
+
+    console.log('createTask', task);
     return this.getAuthHeaders().pipe(
       switchMap((headers) =>
         this.http.post<Task>(this.baseUrl, task, { headers }),

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
-import { delay, map, catchError } from 'rxjs/operators';
+import { delay, map } from 'rxjs/operators';
 import {
   User,
   UserRole,
@@ -9,7 +9,6 @@ import {
   LoginResponse,
   AuthError,
 } from '@turbo-task-master/api-interfaces';
-import { JwtUtils } from '@turbo-task-master/auth-shared';
 
 @Injectable({
   providedIn: 'root',

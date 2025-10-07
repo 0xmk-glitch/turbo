@@ -27,6 +27,7 @@
     </div>
     <div
       cdkDropList
+      id="status-0"
       [cdkDropListData]="tasksByStatus?.[0] || []"
       class="min-h-64 space-y-3"
       (cdkDropListDropped)="drop($event)"
@@ -35,6 +36,7 @@
         <div
           class="bg-white dark:bg-neutral-700 rounded-xl p-5 shadow-soft border border-neutral-200 dark:border-neutral-600 hover:shadow-soft-md transition-all duration-300 cursor-move hover:scale-[1.02] animate-fade-in"
           cdkDrag
+          [cdkDragData]="item"
         >
           <div class="flex items-start justify-between">
             <div class="flex-1">
@@ -128,6 +130,7 @@
     </div>
     <div
       cdkDropList
+      id="status-1"
       [cdkDropListData]="tasksByStatus?.[1] || []"
       class="min-h-64 space-y-3"
       (cdkDropListDropped)="drop($event)"
@@ -136,6 +139,7 @@
         <div
           class="bg-white dark:bg-neutral-700 rounded-xl p-5 shadow-soft border border-neutral-200 dark:border-neutral-600 hover:shadow-soft-md transition-all duration-300 cursor-move hover:scale-[1.02] animate-fade-in"
           cdkDrag
+          [cdkDragData]="item"
         >
           <div class="flex items-start justify-between">
             <div class="flex-1">
@@ -215,6 +219,7 @@
     </div>
     <div
       cdkDropList
+      id="status-2"
       [cdkDropListData]="tasksByStatus?.[2] || []"
       class="min-h-64 space-y-3"
       (cdkDropListDropped)="drop($event)"
@@ -223,6 +228,7 @@
         <div
           class="bg-white dark:bg-neutral-700 rounded-xl p-5 shadow-soft border border-neutral-200 dark:border-neutral-600 hover:shadow-soft-md transition-all duration-300 cursor-move hover:scale-[1.02] opacity-75 animate-fade-in"
           cdkDrag
+          [cdkDragData]="item"
         >
           <div class="flex items-start justify-between">
             <div class="flex-1">

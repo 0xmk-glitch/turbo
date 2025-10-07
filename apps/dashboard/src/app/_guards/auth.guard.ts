@@ -10,7 +10,6 @@ import { Observable, of } from 'rxjs';
 import { map, take, switchMap } from 'rxjs/operators';
 import {
   selectIsAuthenticated,
-  selectUser,
 } from '../stores/auth/auth.selectors';
 import * as AuthActions from '../stores/auth/auth.actions';
 

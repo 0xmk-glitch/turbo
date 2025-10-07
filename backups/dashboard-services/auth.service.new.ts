@@ -4,7 +4,6 @@ import { Observable, of, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import {
   User,
-  UserRole,
   LoginRequest,
   LoginResponse,
   AuthError,

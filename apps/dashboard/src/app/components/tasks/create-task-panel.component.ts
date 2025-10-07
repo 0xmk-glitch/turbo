@@ -1,10 +1,4 @@
-import {
-  Component,
-  Inject,
-  OnInit,
-  OnDestroy,
-  HostListener,
-} from '@angular/core';
+import { Component, Inject, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
@@ -22,7 +16,8 @@ import {
   MAT_DIALOG_DATA,
   MatDialogModule,
 } from '@angular/material/dialog';
-import { CreateTaskDto } from 'libs/data/dto/task/create-task.dto';
+import { CreateTaskDto, UpdateTaskDto } from '@turbo-task-master/api-interfaces';
+import { TasksService } from '../../services/tasks.service';
 
 // Import UI components
 import { ButtonComponent } from '../ui/button/button.component';
@@ -56,10 +51,10 @@ import { DatepickerComponent } from '../ui/datepicker/datepicker.component';
   templateUrl: './create-task-panel.component.html',
   styleUrl: './create-task-panel.component.scss',
 })
-export class CreateTaskPanelComponent implements OnInit, OnDestroy {
+export class CreateTaskPanelComponent implements OnInit {
   taskForm!: FormGroup;
-  isEditMode: boolean = false;
-  isLoading: boolean = false;
+  isEditMode = false;
+  isLoading = false;
   taskData: CreateTaskDto | null = null;
 
   // Dropdown options
@@ -136,7 +131,8 @@ export class CreateTaskPanelComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<CreateTaskPanelComponent>,
     @Inject(MAT_DIALOG_DATA)
-    public data: { taskData?: CreateTaskDto; isEdit?: boolean },
+    public data: { taskData?: CreateTaskDto & { id?: string }; isEdit?: boolean },
+    private tasksService: TasksService,
   ) {
     this.taskData = data?.taskData || null;
     this.isEditMode = data?.isEdit || false;
@@ -150,9 +146,6 @@ export class CreateTaskPanelComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {
-    // Cleanup if needed
-  }
 
   @HostListener('document:keydown.escape', ['$event'])
   onEscapeKey(event: KeyboardEvent) {
@@ -215,21 +208,34 @@ export class CreateTaskPanelComponent implements OnInit, OnDestroy {
       this.isLoading = true;
 
       const formValue = this.taskForm.value;
-      const taskData: CreateTaskDto = {
+      const payload = {
         ...formValue,
-        dueDate: formValue.dueDate
-          ? formValue.dueDate.toISOString()
-          : undefined,
-        id: this.isEditMode ? this.taskData?.id : undefined,
-        createdAt: this.isEditMode ? this.taskData?.createdAt : new Date(),
-        updatedAt: new Date(),
-      };
+        dueDate: formValue.dueDate ? formValue.dueDate.toISOString() : undefined,
+      } as CreateTaskDto;
 
-      // Simulate API call
-      setTimeout(() => {
-        this.isLoading = false;
-        this.dialogRef.close(taskData);
-      }, 1000);
+      if (this.isEditMode && (this.taskData as any)?.id) {
+        const id = String((this.taskData as any).id);
+        const updatePayload: UpdateTaskDto = { ...payload } as UpdateTaskDto;
+        this.tasksService.updateTask(id, updatePayload).subscribe({
+          next: (updated) => {
+            this.isLoading = false;
+            this.dialogRef.close(updated);
+          },
+          error: () => {
+            this.isLoading = false;
+          },
+        });
+      } else {
+        this.tasksService.createTask(payload).subscribe({
+          next: (created) => {
+            this.isLoading = false;
+            this.dialogRef.close(created);
+          },
+          error: () => {
+            this.isLoading = false;
+          },
+        });
+      }
     } else {
       // Mark all fields as touched to show validation errors
       this.taskForm.markAllAsTouched();

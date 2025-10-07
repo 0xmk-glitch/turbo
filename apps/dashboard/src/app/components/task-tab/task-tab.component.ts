@@ -11,18 +11,13 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { CdkDrag, CdkDropList, CdkDropListGroup } from '@angular/cdk/drag-drop';
-import { MasterService } from '../../services/master.service';
+import { TasksService } from '../../services/tasks.service';
+import { UpdateTaskDto } from '@turbo-task-master/api-interfaces';
 import {
   CreateTaskDto,
-  Task,
-  TaskStatus,
-  TaskType,
-  TaskPriority,
 } from '@turbo-task-master/api-interfaces';
 import { RouterModule } from '@angular/router';
 import { TaskBoardComponent } from '../task-board/task-board.component';
-import { CreateTaskComponent } from '../tasks/create-task.component';
 import { CreateTaskPanelComponent } from '../tasks/create-task-panel.component';
 import { KeyboardShortcutService } from '../../services/keyboard-shortcut.service';
 import { KeyboardShortcutsHelpComponent } from '../keyboard-shortcuts-help/keyboard-shortcuts-help.component';
@@ -51,7 +46,7 @@ import { KeyboardShortcutsHelpComponent } from '../keyboard-shortcuts-help/keybo
 })
 export class TaskTabComponent implements OnInit, OnDestroy {
   constructor(
-    private service: MasterService,
+    private tasksService: TasksService,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
     private keyboardShortcutService: KeyboardShortcutService,
@@ -209,7 +204,8 @@ export class TaskTabComponent implements OnInit, OnDestroy {
   };
 
   loadTasks() {
-    this.service.Loadtasks().subscribe((items) => {
+    // TODO: switch to real API when backend seeded
+    this.tasksService.getTasks().subscribe((items) => {
       this.tasklist = items;
       console.log(this.tasklist);
 
@@ -457,16 +453,41 @@ export class TaskTabComponent implements OnInit, OnDestroy {
   }
 
   onTaskDelete(task: any) {
-    // TODO: Implement delete confirmation
-    this.snackBar.open(`Delete task: ${task.title}`, 'Close', {
-      duration: 3000,
+    const id = String(task.id);
+    this.tasksService.deleteTask(id).subscribe({
+      next: () => {
+        this.snackBar.open('Task deleted', 'Close', { duration: 2000 });
+        this.loadTasks();
+      },
+      error: () => {
+        this.snackBar.open('Failed to delete task', 'Close', { duration: 3000 });
+      },
     });
   }
 
   onTaskStatusChange(event: { task: any; newStatus: number }) {
-    // TODO: Implement status update API call
-    this.snackBar.open(`Task status changed to ${event.newStatus}`, 'Close', {
-      duration: 3000,
+    const task = event?.task;
+    if (!task) {
+      console.warn('taskStatusChange: missing task in event');
+      return;
+    }
+
+    const rawId = (task as any).id;
+    if (rawId === undefined || rawId === null) {
+      console.warn('taskStatusChange: task has no id', task);
+      return;
+    }
+
+    const id = String(rawId);
+    const update: UpdateTaskDto = { status: event.newStatus } as UpdateTaskDto;
+    this.tasksService.updateTask(id, update).subscribe({
+      next: () => {
+        this.snackBar.open('Status updated', 'Close', { duration: 2000 });
+        this.loadTasks();
+      },
+      error: () => {
+        this.snackBar.open('Failed to update status', 'Close', { duration: 3000 });
+      },
     });
   }
 

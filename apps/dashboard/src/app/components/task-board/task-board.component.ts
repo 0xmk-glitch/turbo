@@ -12,7 +12,7 @@ import {
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
 
-import { CreateTaskDto } from 'libs/data/dto/task/create-task.dto';
+import { CreateTaskDto } from '@turbo-task-master/api-interfaces';
 
 @Component({
   selector: 'app-task-board',
@@ -59,15 +59,21 @@ export class TaskBoardComponent {
       );
 
       // Emit status change event
-      const task = event.item.data;
+      const task = event.item?.data;
+      if (!task) {
+        console.warn('drop: event.item.data is undefined', event);
+        return;
+      }
       const newStatus = this.getStatusFromContainerId(event.container.id);
       this.taskStatusChange.emit({ task, newStatus });
     }
   }
 
   private getStatusFromContainerId(containerId: string): number {
-    // This would need to be implemented based on how you identify containers
-    // For now, return 0 as default
+    if (containerId?.startsWith('status-')) {
+      const num = Number(containerId.split('status-')[1]);
+      if (!Number.isNaN(num)) return num;
+    }
     return 0;
   }
 

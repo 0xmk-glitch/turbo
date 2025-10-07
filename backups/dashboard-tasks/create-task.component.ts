@@ -26,7 +26,8 @@ import {
   MAT_DIALOG_DATA,
   MatDialogModule,
 } from '@angular/material/dialog';
-import { CreateTaskDto } from 'libs/data/dto/task/create-task.dto';
+import { CreateTaskDto, UpdateTaskDto } from '@turbo-task-master/api-interfaces';
+import { TasksService } from '../../services/tasks.service';
 
 @Component({
   selector: 'app-create-task',
@@ -58,7 +59,8 @@ export class CreateTaskComponent implements OnInit {
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<CreateTaskComponent>,
     @Inject(MAT_DIALOG_DATA)
-    public data: { taskData?: CreateTaskDto; isEdit?: boolean },
+    public data: { taskData?: CreateTaskDto & { id?: string }; isEdit?: boolean },
+    private tasksService: TasksService,
   ) {
     this.taskData = data?.taskData || null;
     this.isEditMode = data?.isEdit || false;
@@ -112,21 +114,34 @@ export class CreateTaskComponent implements OnInit {
       this.isLoading = true;
 
       const formValue = this.taskForm.value;
-      const taskData: CreateTaskDto = {
+      const payload = {
         ...formValue,
-        dueDate: formValue.dueDate
-          ? formValue.dueDate.toISOString()
-          : undefined,
-        id: this.isEditMode ? this.taskData?.id : undefined,
-        createdAt: this.isEditMode ? this.taskData?.createdAt : new Date(),
-        updatedAt: new Date(),
-      };
+        dueDate: formValue.dueDate ? formValue.dueDate.toISOString() : undefined,
+      } as CreateTaskDto;
 
-      // Simulate API call
-      setTimeout(() => {
-        this.isLoading = false;
-        this.dialogRef.close(taskData);
-      }, 1000);
+      if (this.isEditMode && (this.taskData as any)?.id) {
+        const id = String((this.taskData as any).id);
+        const updatePayload: UpdateTaskDto = { ...payload } as UpdateTaskDto;
+        this.tasksService.updateTask(id, updatePayload).subscribe({
+          next: (updated) => {
+            this.isLoading = false;
+            this.dialogRef.close(updated);
+          },
+          error: () => {
+            this.isLoading = false;
+          },
+        });
+      } else {
+        this.tasksService.createTask(payload).subscribe({
+          next: (created) => {
+            this.isLoading = false;
+            this.dialogRef.close(created);
+          },
+          error: () => {
+            this.isLoading = false;
+          },
+        });
+      }
     } else {
       // Mark all fields as touched to show validation errors
       this.taskForm.markAllAsTouched();
